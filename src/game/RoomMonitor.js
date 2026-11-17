@@ -18,6 +18,7 @@ export class RoomMonitor {
     this.zona = zona;
     this.objecte = objecte;
     this.actiu = false;
+    this.modalObert = false;
     this.generacio = 0; // Invalida play() pendents quan sortim de la sala.
     this.avis = "";
     this.dibuixarMarc();
@@ -178,6 +179,8 @@ export class RoomMonitor {
         !!this.host &&
         (document.fullscreenElement === this.host ||
           document.fullscreenElement === this.video),
+      modalObert: this.modalObert,
+      controlsBloquejats: this.scene.bloquejat,
       avis: this.avis,
     };
   }
@@ -187,7 +190,7 @@ export class RoomMonitor {
       this.scene.game.events.emit(OFFICE_EVENTS.STATE, this.dades());
   }
 
-  async executar(accio) {
+  async executar(accio, destiId) {
     if (!this.actiu) return; // Una ordre antiga no ha d'encendre una altra sala.
     const generacio = this.generacio;
     const video = this.video;
@@ -198,6 +201,23 @@ export class RoomMonitor {
         else video.pause();
       } else if (accio === "so") {
         video.muted = !video.muted;
+      } else if (accio === "obrir-modal") {
+        // Vue crea el component i un destí buit; Phaser conserva la propietat
+        // del vídeo. El bus només transporta l'ID del destí, no referències DOM.
+        const desti = document.getElementById(destiId);
+        if (!desti || !desti.classList.contains("monitor-modal-video"))
+          throw new Error("Destí modal no disponible");
+        this.modalObert = true;
+        this.scene.bloquejarControls(true); // Aturem velocitat i netegem WASD ABANS del següent frame.
+        this.textApagat.setText("VISTA MODAL").setVisible(true);
+        const reproduint = !video.paused;
+        desti.appendChild(video); // Mateix node, mateix currentTime: no clonem el reproductor.
+        video.controls = true;
+        // Reparentar HTML pot pausar un vídeo en alguns navegadors. Recuperem
+        // la reproducció només si abans estava en marxa; una pausa voluntària es conserva.
+        if (reproduint) await video.play();
+      } else if (accio === "tancar-modal") {
+        this.tancarModal();
       } else if (accio === "pantalla-completa") {
         // EventEmitter és síncron: mantenim el gest original del clic de Vue,
         // necessari per al permís de fullscreen. No posem timers abans d'aquesta crida.
@@ -218,14 +238,38 @@ export class RoomMonitor {
     const ampliat =
       document.fullscreenElement === this.host ||
       document.fullscreenElement === this.video;
-    this.video.controls = ampliat;
+    this.video.controls = ampliat || this.modalObert;
     this.boto.hidden = ampliat;
-    this.scene.bloquejarControls(ampliat);
+    // Són dos motius de bloqueig independents: sortir del fullscreen natiu del
+    // vídeo no pot reactivar WASD si la finestra modal encara continua oberta.
+    this.scene.bloquejarControls(ampliat || this.modalObert);
     this.emetreEstat(); // Confirmem l'estat REAL del navegador, no només la petició de Vue.
+  }
+
+  tancarModal() {
+    if (!this.modalObert) return;
+    this.modalObert = false;
+    const reproduint = !this.video.paused;
+    this.host.prepend(this.video);
+    const ampliat =
+      document.fullscreenElement === this.host ||
+      document.fullscreenElement === this.video;
+    this.video.controls = ampliat;
+    // Durant SHUTDOWN, Phaser ja pot haver destruït el Text i el plugin d'input.
+    // Retornem el node HTML igualment, però només actualitzem objectes encara vius.
+    if (this.textApagat.scene)
+      this.textApagat.setText("EN ESPERA").setVisible(false);
+    if (this.scene.sys.isActive()) this.scene.bloquejarControls(ampliat);
+    // El node ja ha tornat al mapa de manera síncrona abans que Vue tanqui el diàleg.
+    // Si el navegador l'ha pausat en moure'l, el play és una recuperació, no un reinici.
+    if (reproduint && this.scene.sys.isActive())
+      this.video.play().catch(() => {});
+    this.emetreEstat();
   }
 
   desactivar() {
     if (!this.actiu) return;
+    this.tancarModal(); // També retorna el vídeo si l'escena es reinicia amb el modal obert.
     this.actiu = false;
     ++this.generacio;
     // 4. Cicle de vida: ocultar el node deixaria el vídeo sonant!

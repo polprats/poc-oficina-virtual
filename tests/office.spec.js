@@ -5,7 +5,10 @@ test("DOM monitor, inspector events, fullscreen, scaling and room lifecycle", as
   page,
 }) => {
   const errors = [];
-  page.on("pageerror", (e) => errors.push(e.message));
+  page.on("pageerror", (e) => {
+    errors.push(e.message);
+    console.log(e.stack);
+  });
   await page.goto("/");
   await page.bringToFront();
   await page.waitForFunction(() => !!window.__office?.jugador?.body);
@@ -100,6 +103,78 @@ test("DOM monitor, inspector events, fullscreen, scaling and room lifecycle", as
   await page
     .locator("video")
     .evaluate((v) => (v.dataset.identity = "original"));
+  // La finestra és un component Vue superposat, no fullscreen del navegador.
+  // Mantenim una tecla premuda en obrir per detectar controls enganxats.
+  await page.keyboard.down("d");
+  await page
+    .getByRole("button", { name: "Obrir finestra modal ▣", exact: true })
+    .click();
+  const modal = page.getByRole("dialog");
+  await expect(modal).toBeVisible();
+  await expect(
+    page.getByText("● WASD i fletxes desactivats", { exact: true }),
+  ).toBeVisible();
+  expect(await page.evaluate(() => document.fullscreenElement)).toBeNull();
+  const modalStopped = await pos();
+  await page.keyboard.up("d");
+  for (const key of [
+    "w",
+    "a",
+    "s",
+    "d",
+    "ArrowUp",
+    "ArrowLeft",
+    "ArrowDown",
+    "ArrowRight",
+  ])
+    await walk(key, 80);
+  expect(await pos()).toEqual(modalStopped);
+  expect(
+    await page.evaluate(() => window.__office.input.keyboard.enabled),
+  ).toBe(false);
+  await expect(modal.locator("video")).toHaveAttribute(
+    "data-identity",
+    "original",
+  );
+  await expect(page.locator("video")).toHaveCount(1);
+  expect((await modal.boundingBox()).width).toBeLessThanOrEqual(640);
+  await page.screenshot({
+    path: "screenshots/monitor-modal.png",
+    fullPage: true,
+  });
+  await page.keyboard.press("Escape");
+  await expect(modal).not.toBeVisible();
+  await expect(page.locator(".room-monitor-screen video")).toHaveAttribute(
+    "data-identity",
+    "original",
+  );
+  expect(
+    await page.evaluate(() => window.__office.input.keyboard.enabled),
+  ).toBe(true);
+  const afterModal = await pos();
+  await page.waitForTimeout(200);
+  expect(await pos()).toEqual(afterModal);
+  // La pausa voluntària es conserva durant l'anada i tornada del vídeo.
+  await page.getByRole("button", { name: "Pausar", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Obrir finestra modal ▣", exact: true })
+    .click();
+  await expect(modal).toBeVisible();
+  expect(await page.locator("video").evaluate((v) => v.paused)).toBe(true);
+  await page
+    .getByRole("button", { name: "Tancar finestra modal", exact: true })
+    .click();
+  await expect(modal).not.toBeVisible();
+  expect(await page.locator("video").evaluate((v) => v.paused)).toBe(true);
+  await page.getByRole("button", { name: "Reproduir", exact: true }).click();
+  // El clic al backdrop també tanca i restaura el vídeo/control.
+  await page
+    .getByRole("button", { name: "Obrir finestra modal ▣", exact: true })
+    .click();
+  await expect(modal).toBeVisible();
+  await page.mouse.click(8, 8);
+  await expect(modal).not.toBeVisible();
+
   await page.keyboard.down("d");
   await page
     .getByRole("button", { name: "Pantalla completa ↗", exact: true })
@@ -172,7 +247,11 @@ test("DOM monitor, inspector events, fullscreen, scaling and room lifecycle", as
     })
     .click();
   await expect(
-    page.getByText("Càmera Descans · Canal 02", { exact: true }),
+    page.getByRole("heading", {
+      name: "Càmera Descans · Canal 02",
+      level: 3,
+      exact: true,
+    }),
   ).toBeVisible();
   await page
     .getByRole("button", { name: "Pantalla completa ↗", exact: true })
@@ -205,7 +284,10 @@ test("Tiled defines screen position and size; scene restart removes DOM and list
   page,
 }) => {
   const errors = [];
-  page.on("pageerror", (e) => errors.push(e.message));
+  page.on("pageerror", (e) => {
+    errors.push(e.message);
+    console.log(e.stack);
+  });
   // Canviem NOMÉS el mapa servit, com si l'usuari hagués editat el rectangle a Tiled.
   // Si el codi tingués dimensions hardcoded, aquesta prova fallaria.
   const map = JSON.parse(
@@ -243,7 +325,12 @@ test("Tiled defines screen position and size; scene restart removes DOM and list
   });
   expect(error).toBeLessThan(2);
   const oldVideo = await page.locator("video").elementHandle();
+  await page
+    .getByRole("button", { name: "Obrir finestra modal ▣", exact: true })
+    .click();
+  await expect(page.getByRole("dialog")).toBeVisible();
   await page.evaluate(() => window.__office.scene.restart());
+  await expect(page.getByRole("dialog")).not.toBeVisible();
   await expect(page.locator("video")).toHaveCount(0);
   await expect(
     page.getByText("La pantalla és dins la sala", { exact: true }),

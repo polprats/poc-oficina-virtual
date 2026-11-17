@@ -10,14 +10,18 @@ export class OfficeScene extends Phaser.Scene {
   preload() {
     // El JSON exportat de Tiled és la font de veritat: conté tiles, zones i rectangles
     // de pantalla. El TMX queda com a fitxer editable; Phaser no el carrega directament.
-    this.load.tilemapTiledJSON("mapa", "/assets/maps/oficina.json");
-    this.load.image("tiles_oficina", "/assets/tilesets/pixel_office.png");
-    this.load.spritesheet("george", "/assets/sprites/george.png", {
+    // BASE_URL permet allotjar aquesta mateixa app sota /dom/ o un altre subdirectori.
+    // Una ruta absoluta /assets/... buscaria erròniament els recursos a l'arrel del Site.
+    const assets = `${import.meta.env.BASE_URL}assets/`;
+    this.load.tilemapTiledJSON("mapa", `${assets}maps/oficina.json`);
+    this.load.image("tiles_oficina", `${assets}tilesets/pixel_office.png`);
+    this.load.spritesheet("george", `${assets}sprites/george.png`, {
       frameWidth: 48,
       frameHeight: 48,
     });
   }
   create() {
+    this.bloquejat = false; // Un reinici de l'escena comença fora de modal/fullscreen.
     const map = this.make.tilemap({ key: "mapa" });
     const tiles = map.addTilesetImage("pixel_office", "tiles_oficina");
     map.createLayer("Terra", tiles);
@@ -72,10 +76,10 @@ export class OfficeScene extends Phaser.Scene {
         return zona ? new RoomMonitor(this, zona, obj) : null;
       })
       .filter(Boolean);
-    this.rebreOrdre = ({ id, accio }) => {
+    this.rebreOrdre = ({ id, accio, destiId }) => {
       // Només el monitor de la sala actual accepta ordres de l'inspector.
       if (id === this.zonaActual?.id)
-        this.monitors.find((m) => m.zona.id === id)?.executar(accio);
+        this.monitors.find((m) => m.zona.id === id)?.executar(accio, destiId);
     };
     this.game.events.on(OFFICE_EVENTS.COMMAND, this.rebreOrdre);
     this.jugador = this.physics.add

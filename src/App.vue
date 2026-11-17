@@ -1,21 +1,26 @@
 <script setup>
-import { ref } from "vue";
+import { ref, useId, onBeforeUnmount } from "vue";
 import PhaserCanvas from "./components/PhaserCanvas.vue";
+import MonitorModal from "./components/MonitorModal.vue";
 
-// Vue només conserva dades per a l'inspector. El vídeo i el DOMElement viuen
-// exclusivament a RoomMonitor.js; aquí no hi ha cap <video> ni ref a nodes de Phaser.
+// Vue crea l’inspector i el component modal. RoomMonitor continua sent propietari
+// de l’únic vídeo: el mou temporalment al destí buit creat per MonitorModal.vue.
 const zonaActiva = ref(null);
 const monitor = ref(null);
 const refCanvas = ref(null);
 const preparat = ref(false);
 const seleccionat = ref(false);
 const traca = ref([]);
+const modalObert = ref(false);
+// ID únic del destí, que sempre està muntat encara que el diàleg estigui tancat.
+const destiModalId = `monitor-modal-${useId()}`;
 let ultimaSignatura = "";
 
 function registrar(direccio, nom) {
   traca.value = [{ direccio, nom }, ...traca.value].slice(0, 6);
 }
 function canviZona(zona) {
+  tancarModal();
   zonaActiva.value = zona;
   monitor.value = null;
   seleccionat.value = false;
@@ -34,6 +39,8 @@ function actualitzarMonitor(dades) {
     dades.pausat,
     dades.silenciat,
     dades.pantallaCompleta,
+    dades.modalObert,
+    dades.controlsBloquejats,
     dades.amplada,
     dades.avis,
   ].join("|");
@@ -48,13 +55,28 @@ function seleccionarMonitor(dades) {
   seleccionat.value = true;
   registrar("Phaser → Vue", "monitor-seleccionat");
 }
-function enviarOrdre(accio) {
+function enviarOrdre(accio, extra = {}) {
   if (!monitor.value) return;
   registrar("Vue → Phaser", `monitor-ordre · ${accio}`);
   // El botó de Vue no toca video.play() ni fullscreen: envia una ORDRE.
   // Phaser actua i després confirma l'estat amb monitor-estat (no l'anticipem a Vue).
-  refCanvas.value?.enviarOrdre({ id: monitor.value.id, accio });
+  refCanvas.value?.enviarOrdre({ id: monitor.value.id, accio, ...extra });
 }
+function obrirModal() {
+  if (!monitor.value) return;
+  modalObert.value = true;
+  // El destí HTML ja existeix: podem bloquejar Phaser i moure el vídeo de manera
+  // síncrona. Vue mostrarà el component al següent tick, sense cap frame de moviment.
+  enviarOrdre("obrir-modal", { destiId: destiModalId });
+}
+function tancarModal() {
+  if (!modalObert.value) return;
+  // L'ordre retorna el vídeo al mapa ABANS que Vue amagui el component.
+  enviarOrdre("tancar-modal");
+  modalObert.value = false;
+}
+onBeforeUnmount(tancarModal);
+
 function temps(segons) {
   return `${Math.floor(segons / 60)}:${String(Math.floor(segons % 60)).padStart(2, "0")}`;
 }
@@ -205,6 +227,9 @@ function temps(segons) {
               >
                 Pantalla completa ↗
               </button>
+              <button class="modal-action" @click="obrirModal">
+                Obrir finestra modal ▣
+              </button>
               <div class="video-actions">
                 <button @click="enviarOrdre('reproduccio')">
                   {{ monitor.pausat ? "Reproduir" : "Pausar" }}
@@ -270,5 +295,13 @@ function temps(segons) {
         >
       </footer>
     </main>
+    <!-- Component Vue real; la resta de l’app queda visible darrere seu. -->
+    <MonitorModal
+      :obert="modalObert"
+      :titol="monitor?.titolMonitor || 'Monitor de sala'"
+      :desti-id="destiModalId"
+      :controls-bloquejats="monitor?.controlsBloquejats || false"
+      @tancar="tancarModal"
+    />
   </div>
 </template>

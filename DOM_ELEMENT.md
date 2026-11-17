@@ -2,7 +2,7 @@
 
 ## Què aporta aquesta versió?
 
-Abans, Vue dibuixava el vídeo al panell lateral. Ara cada sala té un monitor físic al mapa. La carcassa és píxel art dibuixat per Phaser; la pantalla és un `<video>` HTML real, col·locat per un **Phaser.GameObjects.DOMElement**. Vue només mostra l'inspector i envia ordres.
+Abans, Vue dibuixava el vídeo al panell lateral. Ara cada sala té un monitor físic al mapa. La carcassa és píxel art dibuixat per Phaser; la pantalla és un `<video>` HTML real, col·locat per un **Phaser.GameObjects.DOMElement**. Vue mostra l’inspector, crea una finestra modal opcional i envia ordres.
 
 No és una textura de vídeo de Phaser: el navegador compon dues capes.
 
@@ -64,7 +64,7 @@ El botó de la pantalla és HTML, així que utilitzem `addEventListener('click',
 | Phaser → Vue | `canvi-zona` | Sala actual o `null`; neteja l'inspector anterior. |
 | Phaser → Vue | `monitor-seleccionat` | Clic al vídeo petit: identifica el monitor a l'inspector. |
 | Phaser → Vue | `monitor-estat` | Resolució, temps, pausa, so, fullscreen i avisos reals. |
-| Vue → Phaser | `monitor-ordre` | `{ id, accio }`; accions: `reproduccio`, `so`, `pantalla-completa`. |
+| Vue → Phaser | `monitor-ordre` | `{ id, accio, destiId? }`; accions: `reproduccio`, `so`, `pantalla-completa`, `obrir-modal`, `tancar-modal`. |
 
 El contracte és a `src/game/officeEvents.js`. Els missatges contenen dades planes, sense referències al vídeo ni a l'escena. L'escena només accepta ordres per a la sala actual. Vue espera el missatge de retorn per actualitzar l'estat: no pressuposa que el navegador hagi acceptat una petició.
 
@@ -77,6 +77,36 @@ El botó de Vue envia una ordre; Phaser crida `host.requestFullscreen()`. El bus
 El navegador presenta el mateix node al seu *top layer*. La regla CSS `:fullscreen` n'ajusta dimensions i transformació. No creem cap reproductor a Vue, ni clonem el vídeo: el temps i l'àudio continuen al mateix element. `fullscreenchange` activa els controls natius, bloqueja el moviment de George i confirma l'estat a Vue. En sortir amb Escape, el botó o els controls del navegador, el moviment es recupera.
 
 Si el navegador denega l'acció, l'inspector mostra l'avís. La pantalla completa requereix suport del navegador i permís del contenidor; un iframe extern podria necessitar `allowfullscreen`.
+
+## 5.b. Finestra modal: un component Vue que allotja temporalment el vídeo
+
+`MonitorModal.vue` és un component separat i comentat. Renderitza un `<dialog>` amb títol, botó de tancament, confirmació de controls bloquejats i un contenidor buit. No té cap `<video>` al seu template.
+
+La diferència amb fullscreen és qui presenta la vista: aquí Vue mostra un component de màxim 640 px d’amplada, sense ocupar tota la pantalla. El diàleg natiu apareix al *top layer*, per sobre tant del canvas com de la capa HTML de Phaser. La resta de la pàgina queda inerta i el focus queda dins del component.
+
+El flux complet és:
+
+```text
+Clic al botó de Vue
+  → monitor-ordre { id, accio: 'obrir-modal', destiId }
+  → RoomMonitor bloqueja la física/teclat i mou el <video> al destí de Vue
+  → monitor-estat { modalObert: true, controlsBloquejats: true, ... }
+  → Vue mostra el modal amb la confirmació real
+
+Botó / Escape / clic al backdrop
+  → Vue envia monitor-ordre { id, accio: 'tancar-modal' }
+  → RoomMonitor retorna el mateix <video> al seu host DOMElement
+  → restaura WASD/fletxes i envia monitor-estat
+  → Vue tanca el diàleg i recupera el focus anterior
+```
+
+`destiId` és una cadena creada amb `useId()` de Vue. El bus continua sense transportar nodes ni instàncies de components. Phaser resol aquest destí explícit i només accepta un contenidor amb la classe prevista.
+
+El DOMElement **es queda al mapa**; només es mou el seu fill vídeo. Durant la visita al modal, la carcassa diu «VISTA MODAL». En tornar, el vídeo recupera la posició i mida de Tiled perquè torna al mateix host. Aquest destí buit és l’única àrea de Vue que admet contingut DOM gestionat externament; Vue no intenta reconciliar fills de vídeo que no ha creat.
+
+Bloquejar no vol dir només desactivar events: també cal frenar la velocitat i netejar les tecles ja premudes. Les proves mantenen D premuda en obrir i intenten moure George amb totes les tecles WASD i les quatre fletxes. La posició real no canvia; en tancar, es pot tornar a caminar sense tecles enganxades.
+
+Si s’utilitza el fullscreen natiu del vídeo mentre el modal és obert, els motius de bloqueig es combinen: sortir de fullscreen no pot desbloquejar George fins que també es tanqui el modal. El reinici o la destrucció de l’escena retornen i alliberen el vídeo abans de deixar el component buit.
 
 ## 6. Activar, sortir i destruir
 

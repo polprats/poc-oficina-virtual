@@ -1,5 +1,16 @@
 # Historial de versions
 
+## v1.3.0 — 2026-11-17
+
+- Nou botó «Obrir finestra modal», a més de la pantalla completa existent.
+- Component Vue `MonitorModal.vue`, de màxim 640 px, amb títol, controls natius i confirmació real del bloqueig de WASD/fletxes.
+- El mateix vídeo viatja temporalment del DOMElement al destí buit de Vue i torna al mapa en tancar; es conserva la pausa voluntària.
+- Tancament amb botó, Escape o backdrop, restauració del focus i recuperació del moviment sense tecles enganxades.
+- Ordres `obrir-modal` / `tancar-modal` i retorn d’estat documentats; cap node DOM viatja pel bus.
+- Portada allotjable amb tres demos independents, URLs pròpies, enllaços al codi de cada etiqueta i constructor estàtic reproduïble.
+- README amb comparació detallada de les tres etiquetes de referència (`v1.0.0`, `v1.1.0`, `v1.2.0`) i la nova ampliació.
+- Proves ampliades per verificar immobilitat, identitat del vídeo, pausa, tancaments i reinici de l’escena amb el modal obert.
+
 ## v1.2.0 — 2026-11-17
 
 - Monitors de píxel art al mapa amb vídeo HTML posicionat mitjançant Phaser DOMElement.

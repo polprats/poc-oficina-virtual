@@ -738,3 +738,17 @@ footer a:hover {
     grid-column: 1/-1;
   }
 }
+
+.modal-action {
+  width: 100%;
+  margin-top: 8px;
+  border: 1px solid #b4c9b6;
+  border-radius: 6px;
+  background: #edf4e9;
+  color: #3c694b;
+  padding: 10px;
+  font-size: 11px;
+}
+.modal-action:hover {
+  background: #e1eddb;
+}
