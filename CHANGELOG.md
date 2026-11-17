@@ -1,5 +1,15 @@
 # Historial de versions
 
+## v1.2.0 — 2026-11-17
+
+- Monitors de píxel art al mapa amb vídeo HTML posicionat mitjançant Phaser DOMElement.
+- Inspector Vue sense vídeo, amb metadades i ordres de reproducció, so i pantalla completa.
+- Bus bidireccional amb contracte compartit i traça visible d’esdeveniments.
+- Pantalla completa real sobre el mateix vídeo, amb bloqueig de moviment.
+- Posicions i associacions dels monitors definides a Tiled.
+- Codi nou comentat en català i guia `DOM_ELEMENT.md` sobre capes, coordenades, input, escala i neteja.
+- Proves d’alineació responsive, fullscreen, ordres i alliberament del vídeo.
+
 ## v1.1.0 — 2026-11-17
 
 - Substituït el personatge provisional pel George original de sheep, indicat a la guia de la Fase 3.

@@ -32,13 +32,17 @@ for y in range(h):
 def props(**kwargs): return [{'name':k,'type':'string','value':v} for k,v in kwargs.items()]
 objects=[{'id':1,'name':'George','x':400,'y':485,'width':0,'height':0,'point':True,'properties':props(tipus='spawn')},
 {'id':2,'name':'Reunions','x':48,'y':48,'width':320,'height':256,'properties':props(tipus='zona',nomSala='Sala de Reunions',titolMonitor='Reunions · Canal 01',streamUrl='https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4')},
-{'id':3,'name':'Cafè','x':432,'y':48,'width':320,'height':256,'properties':props(tipus='zona',nomSala='Zona Cafè',titolMonitor='Càmera Descans · Canal 02',streamUrl='https://media.w3.org/2010/05/sintel/trailer.mp4')}]
+{'id':3,'name':'Cafè','x':432,'y':48,'width':320,'height':256,'properties':props(tipus='zona',nomSala='Zona Cafè',titolMonitor='Càmera Descans · Canal 02',streamUrl='https://media.w3.org/2010/05/sintel/trailer.mp4')},
+# Aquests rectangles defineixen la posició i la mida EXACTES de la pantalla HTML.
+# El marc es dibuixa al voltant. Canvia x/y/width/height a Tiled i reexporta el JSON.
+{'id':4,'name':'Monitor Reunions','x':160,'y':106,'width':96,'height':54,'properties':props(tipus='monitor',zonaId='2')},
+{'id':5,'name':'Monitor Cafè','x':568,'y':153,'width':96,'height':54,'properties':props(tipus='monitor',zonaId='3')}]
 layers=[{'id':i,'name':n,'type':'tilelayer','width':w,'height':h,'x':0,'y':0,'opacity':1,'visible':True,'data':data} for i,n,data in [(1,'Terra',floor),(2,'Parets',walls)]]
 layers.append({'id':3,'name':'Objectes','type':'objectgroup','opacity':1,'visible':True,'x':0,'y':0,'objects':objects})
 tileset={'firstgid':1,'name':'pixel_office','tilewidth':32,'tileheight':32,'tilecount':4,'columns':4,'image':'../tilesets/pixel_office.png','imagewidth':128,'imageheight':32,'margin':0,'spacing':0,'tiles':[{'id':2,'properties':[{'name':'collides','type':'bool','value':True}]}]}
-mapdata={'version':'1.10','tiledversion':'1.11.2','type':'map','orientation':'orthogonal','renderorder':'right-down','infinite':False,'width':w,'height':h,'tilewidth':32,'tileheight':32,'nextlayerid':4,'nextobjectid':4,'layers':layers,'tilesets':[tileset]}
+mapdata={'version':'1.10','tiledversion':'1.11.2','type':'map','orientation':'orthogonal','renderorder':'right-down','infinite':False,'width':w,'height':h,'tilewidth':32,'tileheight':32,'nextlayerid':4,'nextobjectid':6,'layers':layers,'tilesets':[tileset]}
 (root/'maps/oficina.json').write_text(json.dumps(mapdata,ensure_ascii=False,indent=2),encoding='utf-8')
-m=ET.Element('map',version='1.10',tiledversion='1.11.2',orientation='orthogonal',renderorder='right-down',width=str(w),height=str(h),tilewidth='32',tileheight='32',infinite='0',nextlayerid='4',nextobjectid='4')
+m=ET.Element('map',version='1.10',tiledversion='1.11.2',orientation='orthogonal',renderorder='right-down',width=str(w),height=str(h),tilewidth='32',tileheight='32',infinite='0',nextlayerid='4',nextobjectid='6')
 t=ET.SubElement(m,'tileset',firstgid='1',name='pixel_office',tilewidth='32',tileheight='32',tilecount='4',columns='4')
 ET.SubElement(t,'image',source='../tilesets/pixel_office.png',width='128',height='32')
 p=ET.SubElement(ET.SubElement(t,'tile',id='2'),'properties');ET.SubElement(p,'property',name='collides',type='bool',value='true')

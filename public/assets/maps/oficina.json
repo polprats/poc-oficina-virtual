@@ -10,7 +10,7 @@
   "tilewidth": 32,
   "tileheight": 32,
   "nextlayerid": 4,
-  "nextobjectid": 4,
+  "nextobjectid": 6,
   "layers": [
     {
       "id": 1,
@@ -1020,6 +1020,46 @@
               "name": "streamUrl",
               "type": "string",
               "value": "https://media.w3.org/2010/05/sintel/trailer.mp4"
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "name": "Monitor Reunions",
+          "x": 160,
+          "y": 106,
+          "width": 96,
+          "height": 54,
+          "properties": [
+            {
+              "name": "tipus",
+              "type": "string",
+              "value": "monitor"
+            },
+            {
+              "name": "zonaId",
+              "type": "string",
+              "value": "2"
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "name": "Monitor Cafè",
+          "x": 568,
+          "y": 153,
+          "width": 96,
+          "height": 54,
+          "properties": [
+            {
+              "name": "tipus",
+              "type": "string",
+              "value": "monitor"
+            },
+            {
+              "name": "zonaId",
+              "type": "string",
+              "value": "3"
             }
           ]
         }

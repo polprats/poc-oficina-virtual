@@ -1,6 +1,6 @@
 # Espai · Oficina virtual
 
-Implementació funcional de la Fase 4.a i 4.b amb Vue 3, Vite i Phaser 4. Inclou les dues sales, mapa editable amb Tiled i gràfics d’oficina originals creats per a aquesta demostració. El personatge és el George original de sheep (OpenGameArt, CC BY 3.0); vegeu `THIRD_PARTY_NOTICES.md`. La carpeta inicial era buida: no s'han modificat les presentacions ni s'han utilitzat els assets d'una Fase 3 existent.
+Vue 3 + Vite + Phaser 4. Dues sales, George original, mapa Tiled editable i monitors de píxel art que mostren vídeo HTML real dins d’un **DOMElement de Phaser**.
 
 ## Executar
 
@@ -12,38 +12,52 @@ npm ci
 npm run dev
 ```
 
-Obre http://127.0.0.1:5173. Per generar la versió distribuïble, executa `npm run build`; el resultat és a `dist/`. `npm run preview` serveix aquest resultat localment.
+Obre http://127.0.0.1:5173. `npm run build` genera `dist/`; `npm run preview` serveix aquesta compilació localment.
 
-## Provar la solució
+## Provar l’experiment
 
-1. Mou George amb WASD o les fletxes. El punt d'aparició és a l'espai comú, sense reproductor ni àudio.
-2. Travessa la porta de la Sala de Reunions, a l'esquerra: apareix el vídeo de flors de MDN.
-3. Clica el vídeo o «Ampliar monitor»: s'obre el modal i George queda immòbil. Prem WASD per comprovar-ho.
-4. Tanca amb el botó, Escape o clic al marge del modal. El mateix vídeo torna al panell, conserva la reproducció i el moviment es reactiva.
-5. Surt al passadís: el vídeo es destrueix i s'atura. Entra per la porta dreta a la Zona Cafè per veure el canal de Sintel.
+1. Mou George amb WASD o fletxes. A l’espai comú els dos monitors estan apagats.
+2. Entra a Reunions per la porta esquerra: el monitor del mapa reprodueix el vídeo petit.
+3. Clica la pantalla del monitor: l’inspector de Vue rep `monitor-seleccionat`. No mostra cap altre vídeo.
+4. Prova Pausar, Reproduir i Activar so: Vue envia ordres a Phaser, que confirma l’estat.
+5. Prem «Pantalla completa»: s’amplia el mateix vídeo i George queda immòbil. Torna amb Escape o el botó superior.
+6. Surt de la sala: es destrueix el DOMElement i s’atura completament el vídeo. A la Zona Cafè s’activa un altre canal.
+7. Obre «Traça d’esdeveniments» per seguir la comunicació entre Vue i Phaser.
 
-El vídeo de flors de MDN no té pista d'àudio; prova el so amb Sintel a la Zona Cafè. Quan el navegador bloqueja l'autoplay amb so, es prova la reproducció silenciada i apareix el botó «Activar so». Els vídeos depenen de la connexió als servidors externs i els errors es mostren al panell. La interfície s'adapta a mòbil; aquesta fase utilitza teclat per moure el personatge.
+El vídeo de flors de MDN no té pista d’àudio; prova el so amb Sintel a la Zona Cafè. L’autoplay comença silenciat. Els dos vídeos depenen dels servidors externs. Si el navegador denega una acció, l’inspector mostra l’avís. Aquesta fase utilitza teclat per moure’s; la interfície s’adapta a pantalles estretes.
 
-## Fitxers i arquitectura
+## Aprendre DOMElement
 
-- `src/game/OfficeScene.js`: carrega el mapa Tiled, aplica col·lisions de parets, anima el personatge, comprova zones pels peus i emet `canvi-zona` amb `{ id, nom, titolMonitor, streamUrl }` o `null`.
-- `src/components/PhaserCanvas.vue`: pont bidireccional; reenvia `canviZona` i exposa `bloquejarControls` amb `defineExpose`. Destrueix Phaser en desmuntar-se.
-- `src/App.vue`: monitor, gestió d'autoplay, so, errors i modal natiu accessible. Mou un únic element `<video>` entre miniatura i modal per evitar dues reproduccions simultànies.
-- `public/assets/maps/oficina.tmx`: mapa editable de Tiled. Després de canviar-lo, exporta a `oficina.json`, a la mateixa carpeta. Les capes són `Terra`, `Parets` i `Objectes`. Les sales tenen `tipus`, `nomSala`, `titolMonitor` i `streamUrl`.
-- `scripts/create_assets.py`: reprodueix el mapa i els gràfics d’oficina originals amb Pillow. Executar-lo sobreescriu el mapa i el tileset, però conserva el spritesheet original de George; no cal per iniciar l’aplicació.
+Llegeix **[DOM_ELEMENT.md](DOM_ELEMENT.md)**. Explica les dues capes, el contenidor HTML, el sistema de coordenades, l’escala, els esdeveniments natius, fullscreen i la neteja. El codi nou està comentat en català, especialment `RoomMonitor.js` i `PhaserCanvas.vue`.
 
-## Correccions respecte del codi de les guies
+| Fitxer | Responsabilitat |
+|---|---|
+| `src/game/RoomMonitor.js` | Marc de píxel art, creació del vídeo, `this.add.dom`, reproducció, fullscreen i destrucció. |
+| `src/game/OfficeScene.js` | Mapa, George, col·lisions, zones, activació de monitors i recepció d’ordres. |
+| `src/game/officeEvents.js` | Contracte del bus d’esdeveniments. |
+| `src/components/PhaserCanvas.vue` | Activa `dom.createContainer` i connecta el bus Phaser amb els esdeveniments Vue. |
+| `src/App.vue` | Inspector de metadades i botons que envien ordres. No crea cap vídeo. |
+| `src/style.css` | Interfície, pantalla HTML i estat `:fullscreen`. |
 
-- Phaser 4 s'importa amb `import * as Phaser from 'phaser'`, segons la [documentació oficial](https://phaser.io/news/2026/06/how-to-update-phaser-4-to-the-latest-version-without-breaking-your-project).
-- Bloquejar el teclat també neteja les tecles premudes i atura el bucle de moviment. El personatge no pot continuar movent-se per una tecla mantinguda abans d'obrir el modal.
-- Les zones es comparen per ID, així que dues sales amb el mateix nom també funcionen.
-- Un únic reproductor evita eco i reinicis del vídeo quan s'amplia.
-- El modal gestiona el focus, Escape i la restauració del focus; els controls es desbloquegen en tancar.
-- Es mostra «canal simulat» perquè els MP4 no són una emissió en directe.
+## Posició i mida dels monitors a Tiled
 
-## SimplePeer: abast d'aquesta fase
+Obre `public/assets/maps/oficina.tmx`, capa **Objectes**, i selecciona «Monitor Reunions» o «Monitor Cafè».
 
-No s'ha implementat una sessió WebRTC real, tal com estableix la prova de concepte de les guies. El punt de reproducció està centralitzat a `App.vue`: per reproduir un `MediaStream`, cal retirar `src` i assignar `video.value.srcObject = remoteStream`. Un sistema real també necessita senyalització, negociació de peers per sala, permisos de càmera/micròfon, configuració STUN/TURN i neteja dels peers en sortir. Aquestes peces no estan incloses en els documents com a implementació d'aquesta fase.
+- El rectangle defineix l’àrea exacta del vídeo: `x`, `y`, `width` i `height` es llegeixen directament de Tiled.
+- El marc decoratiu es dibuixa al voltant i s’adapta a aquestes dimensions.
+- Propietats: `tipus = monitor` i `zonaId` amb l’ID de l’objecte zona associat (`2` o `3` al mapa inicial).
+- La zona manté `nomSala`, `titolMonitor` i `streamUrl`; el monitor no duplica aquestes dades.
+- Utilitza rectangles sense rotació. Després d’editar, exporta sobre `public/assets/maps/oficina.json`.
+
+`scripts/create_assets.py` reprodueix el mapa inicial i el tileset original amb Pillow. **Sobreescriu els canvis manuals del mapa**; no cal executar-lo per iniciar l’app. Conserva el spritesheet original de George.
+
+## Versions conservades
+
+- `v1.0.0`: versió inicial amb el personatge provisional i reproductor lateral Vue.
+- `v1.1.0`: mateixa experiència amb el George original.
+- `v1.2.0`: experiment DOMElement, monitors al mapa i inspector Vue sense vídeo.
+
+El George original és de sheep (OpenGameArt, CC BY 3.0). La imatge es conserva sense modificar; vegeu `THIRD_PARTY_NOTICES.md`. El mapa i els gràfics d’oficina són originals de la demostració.
 
 ## Validació
 
@@ -53,11 +67,16 @@ npm test
 npm run build
 ```
 
-Les proves recorren les portes amb teclat i física reals, verifiquen els dos canals, la reproducció efectiva, la desaparició en sortir, el mateix element vídeo al modal, el bloqueig amb una tecla prèviament premuda, la recuperació del moviment, els tres tancaments del modal i l'absència de desbordament a 390 px. Les captures són a `screenshots/`.
+Les proves verifiquen el DOMElement real, la reproducció, l’absència de vídeo a Vue, els botons de l’inspector, el mateix vídeo en fullscreen, el bloqueig i retorn de moviment, l’alineació després de redimensionar la finestra, el canvi de sala, la neteja del vídeo anterior i l’amplada mòbil. Captures a `screenshots/`.
 
-La compilació genera un avís de mida pel motor Phaser (aproximadament 357 kB gzip). `npm audit` també informa d'una cadena d'avisos a les eines de desenvolupament (`picomatch` / `tinyglobby` / Vite) sense una actualització corregida disponible a les versions consultades. El servidor es limita a 127.0.0.1; els fitxers estàtics de `dist/` no incorporen aquestes eines de desenvolupament.
+La compilació avisa de la mida del motor Phaser (~357 kB gzip). L’auditoria de dependències manté els avisos coneguts de les eines de desenvolupament (`picomatch` / `tinyglobby` / Vite). El servidor es limita a 127.0.0.1; aquestes eines no formen part dels fitxers estàtics de `dist/`.
 
-## Documents de referència
+## Abast
+
+Els canals són vídeos MP4 de prova. No hi ha encara multijugador ni SimplePeer real. Un futur `MediaStream` s’assignaria a `video.srcObject` dins de `RoomMonitor`, mantenint el mateix inspector i el contracte d’esdeveniments. La senyalització, la gestió de peers, els permisos i STUN/TURN serien una ampliació separada.
+
+## Referències
 
 - [Fase 4.a · Guia conceptual](https://docs.google.com/presentation/d/1r32IR4PM78spyuMOJTZhFeUvnAI-ISuX/edit)
-- [Fase 4.b · Implementació completa](https://docs.google.com/presentation/d/12b4I-y0dnlDUdO7y8A9b27_uOuHGU0F5kcT2szA364w/edit)
+- [Fase 4.b · Implementació](https://docs.google.com/presentation/d/12b4I-y0dnlDUdO7y8A9b27_uOuHGU0F5kcT2szA364w/edit)
+- [DOM Element · Documentació oficial Phaser](https://phaser.io/oss/docs/phaser/concepts/gameobjects/dom-element)

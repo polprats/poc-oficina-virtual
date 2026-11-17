@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="25" height="18" tilewidth="32" tileheight="32" infinite="0" nextlayerid="4" nextobjectid="4">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="25" height="18" tilewidth="32" tileheight="32" infinite="0" nextlayerid="4" nextobjectid="6">
   <tileset firstgid="1" name="pixel_office" tilewidth="32" tileheight="32" tilecount="4" columns="4">
     <image source="../tilesets/pixel_office.png" width="128" height="32" />
     <tile id="2">
@@ -73,6 +73,18 @@
         <property name="nomSala" type="string" value="Zona Cafè" />
         <property name="titolMonitor" type="string" value="Càmera Descans · Canal 02" />
         <property name="streamUrl" type="string" value="https://media.w3.org/2010/05/sintel/trailer.mp4" />
+      </properties>
+    </object>
+    <object id="4" name="Monitor Reunions" x="160" y="106" width="96" height="54">
+      <properties>
+        <property name="tipus" type="string" value="monitor" />
+        <property name="zonaId" type="string" value="2" />
+      </properties>
+    </object>
+    <object id="5" name="Monitor Cafè" x="568" y="153" width="96" height="54">
+      <properties>
+        <property name="tipus" type="string" value="monitor" />
+        <property name="zonaId" type="string" value="3" />
       </properties>
     </object>
   </objectgroup>
