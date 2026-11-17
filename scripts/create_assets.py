@@ -1,4 +1,8 @@
-"""Original procedural pixel assets and synchronized Tiled TMX / JSON map."""
+"""Original office tiles and synchronized Tiled TMX / JSON map.
+
+The third-party George spritesheet is deliberately preserved unchanged.
+See THIRD_PARTY_NOTICES.md for its source and attribution.
+"""
 from PIL import Image, ImageDraw
 from pathlib import Path
 import json
@@ -18,27 +22,6 @@ for i,c in enumerate(colors):
         d.rectangle((x,0,x+31,5),fill='#94a99c')
         d.line((x,6,x+31,6),fill='#adc2b1')
 tiles.save(root/'tilesets/pixel_office.png')
-sprite=Image.new('RGBA',(192,192))
-s=ImageDraw.Draw(sprite)
-for row in range(4):
-    for col in range(4):
-        x=col*48; y=row*48
-        step=[0,2,0,-2][row]
-        s.ellipse((x+13,y+38,x+35,y+44),fill='#243d4135')
-        s.rectangle((x+18,y+31,x+22,y+41+(step if col in [1,3] else 0)),fill='#344954')
-        s.rectangle((x+26,y+31,x+30,y+41-(step if col in [1,3] else 0)),fill='#344954')
-        s.rectangle((x+16,y+20,x+32,y+33),fill='#b16f4d')
-        s.rectangle((x+13,y+22,x+16,y+31+step),fill='#e2b98d')
-        s.rectangle((x+32,y+22,x+35,y+31-step),fill='#e2b98d')
-        s.rectangle((x+18,y+9,x+30,y+22),fill='#e2b98d')
-        s.rectangle((x+17,y+7,x+31,y+12),fill='#554337')
-        if col==2: s.rectangle((x+17,y+9,x+31,y+17),fill='#554337')
-        elif col==0:
-            for eye in [20,27]: s.rectangle((x+eye,y+15,x+eye+1,y+16),fill='#334338')
-        else:
-            eye=19 if col==1 else 28
-            s.rectangle((x+eye,y+15,x+eye+1,y+16),fill='#334338')
-sprite.save(root/'sprites/george.png')
 w,h=25,18
 floor=[];walls=[]
 for y in range(h):
@@ -70,4 +53,4 @@ for obj in objects:
     for prop in obj['properties']: ET.SubElement(p,'property',**prop)
 ET.indent(m)
 ET.ElementTree(m).write(root/'maps/oficina.tmx',encoding='utf-8',xml_declaration=True)
-print('Created original tiles, George spritesheet, oficina.json and oficina.tmx')
+print('Created original office tiles, oficina.json and oficina.tmx; preserved George spritesheet')

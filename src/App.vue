@@ -44,7 +44,7 @@ onBeforeUnmount(() => { video.value?.pause(); });
 
 <template>
   <div class="app-shell">
-    <nav class="rail" aria-label="Espai de treball"><a class="brand" href="#" aria-label="Espai inici">e<span>·</span></a><div class="rail-icons"><span class="selected" title="Oficina">▦</span><span title="Sales">▤</span></div><div class="avatar">G</div></nav>
+    <nav class="rail" aria-label="Espai de treball"><a class="brand" href="#" aria-label="Espai inici">e<span>·</span></a><div class="rail-icons"><span class="selected" title="Oficina">▦</span><span title="Sales">▤</span></div><div class="avatar george-avatar" role="img" aria-label="George"></div></nav>
     <main>
       <header><div class="breadcrumb">EL TEU ESPAI DE TREBALL <span>/</span> OFICINA VIRTUAL</div><span class="connection"><i></i> Entorn de demostració</span></header>
       <div class="page-title"><div><div class="eyebrow">CONNECTA DES D’ON SIGUIS</div><h1>Un lloc per trobar-nos<span>.</span></h1><p>Entra en una sala. Comparteix el moment.</p></div><div class="date-tag">ESPAI <span>01</span></div></div>
@@ -56,7 +56,7 @@ onBeforeUnmount(() => { video.value?.pause(); });
           <div v-if="!preparat" class="loading">Preparant l’oficina…</div>
         </section>
         <aside>
-          <section class="presence"><div class="section-label">ARA ETS A <span>↙</span></div><h2>{{ zonaActiva?.nom || 'Espai comú' }}</h2><p>{{ zonaActiva ? 'El monitor d’aquesta sala ja està disponible.' : 'Camina fins a una sala per activar el seu monitor.' }}</p><div class="person"><span class="person-avatar">G<i></i></span><div><strong>George <small>(tu)</small></strong><span>Disponible per connectar</span></div><span class="person-status">EN LÍNIA</span></div></section>
+          <section class="presence"><div class="section-label">ARA ETS A <span>↙</span></div><h2>{{ zonaActiva?.nom || 'Espai comú' }}</h2><p>{{ zonaActiva ? 'El monitor d’aquesta sala ja està disponible.' : 'Camina fins a una sala per activar el seu monitor.' }}</p><div class="person"><span class="person-avatar george-avatar" role="img" aria-label="George"><i></i></span><div><strong>George <small>(tu)</small></strong><span>Disponible per connectar</span></div><span class="person-status">EN LÍNIA</span></div></section>
           <section class="monitor-section"><div class="section-label">MONITOR DE SALA <span class="channel-badge">{{ zonaActiva ? 'ACTIU' : 'EN ESPERA' }}</span></div>
             <div v-if="!zonaActiva?.streamUrl" class="empty-monitor"><div class="monitor-symbol">▣<i></i></div><h3>La conversa comença aquí</h3><p>Entra a Reunions o a la Zona Cafè.<br>El canal s’activarà automàticament.</p><span>○ &nbsp; Sense àudio ni vídeo</span></div>
             <template v-else>
@@ -74,7 +74,7 @@ onBeforeUnmount(() => { video.value?.pause(); });
           <section class="rooms"><div class="section-label">EXPLORA LES SALES <span>02</span></div><div class="room-row" :class="{active:zonaActiva?.id===2}"><span class="room-icon">▤</span><div><strong>Sala de Reunions</strong><small>Idees que prenen forma</small></div><i></i></div><div class="room-row" :class="{active:zonaActiva?.id===3}"><span class="room-icon coffee">♧</span><div><strong>Zona Cafè</strong><small>Una pausa, una conversa</small></div><i></i></div></section>
         </aside>
       </div>
-      <footer><span><i></i> A prop, encara que siguem lluny.</span><span>OFICINA VIRTUAL · PROVA DE CONCEPTE</span></footer>
+      <footer><span><i></i> A prop, encara que siguem lluny.</span><span><a href="https://opengameart.org/content/alternate-lpc-character-sprites-george" target="_blank" rel="noopener noreferrer">George · sheep</a> · <a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener noreferrer">CC BY 3.0</a></span></footer>
     </main>
     <dialog ref="dialog" @cancel.prevent="tancarModalGran" @click="e => { if(e.target === dialog) tancarModalGran(); }" aria-labelledby="modal-title">
       <div class="modal-header"><div><div class="eyebrow">MONITOR DE SALA · VISTA AMPLIADA</div><h2 id="modal-title">{{ zonaActiva?.titolMonitor }}</h2></div><button @click="tancarModalGran" aria-label="Tancar monitor">Tancar ✕</button></div><div ref="modalHost" class="modal-video"></div><div class="modal-footer"><span><i class="status-dot"></i> Vídeo de prova</span><span>Moviment en pausa · <kbd>Esc</kbd> per tornar a l’oficina</span></div>

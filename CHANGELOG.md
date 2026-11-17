@@ -1,5 +1,15 @@
 # Historial de versions
 
+## v1.1.0 — 2026-11-17
+
+- Substituït el personatge provisional pel George original de sheep, indicat a la guia de la Fase 3.
+- Conservades les animacions en quatre direccions, el hitbox dels peus i el bloqueig del moviment al modal.
+- Avatars de la interfície amb el mateix George i crèdit visible de l'autor.
+- Afegits la procedència i la llicència a `THIRD_PARTY_NOTICES.md`.
+- El generador del mapa ja no sobreescriu el spritesheet de George.
+
+L'etiqueta `v1.0.0` conserva la versió anterior amb el personatge provisional.
+
 ## v1.0.0 — 2026-11-17
 
 Primera versió de l'oficina virtual, conservada abans d'integrar el personatge George original.

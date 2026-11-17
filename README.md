@@ -1,6 +1,6 @@
 # Espai · Oficina virtual
 
-Implementació funcional de la Fase 4.a i 4.b amb Vue 3, Vite i Phaser 4. Inclou les dues sales, mapa editable amb Tiled i gràfics originals creats per a aquesta demostració. La carpeta inicial era buida: no s'han modificat les presentacions ni s'han utilitzat els assets d'una Fase 3 existent.
+Implementació funcional de la Fase 4.a i 4.b amb Vue 3, Vite i Phaser 4. Inclou les dues sales, mapa editable amb Tiled i gràfics d’oficina originals creats per a aquesta demostració. El personatge és el George original de sheep (OpenGameArt, CC BY 3.0); vegeu `THIRD_PARTY_NOTICES.md`. La carpeta inicial era buida: no s'han modificat les presentacions ni s'han utilitzat els assets d'una Fase 3 existent.
 
 ## Executar
 
@@ -30,7 +30,7 @@ El vídeo de flors de MDN no té pista d'àudio; prova el so amb Sintel a la Zon
 - `src/components/PhaserCanvas.vue`: pont bidireccional; reenvia `canviZona` i exposa `bloquejarControls` amb `defineExpose`. Destrueix Phaser en desmuntar-se.
 - `src/App.vue`: monitor, gestió d'autoplay, so, errors i modal natiu accessible. Mou un únic element `<video>` entre miniatura i modal per evitar dues reproduccions simultànies.
 - `public/assets/maps/oficina.tmx`: mapa editable de Tiled. Després de canviar-lo, exporta a `oficina.json`, a la mateixa carpeta. Les capes són `Terra`, `Parets` i `Objectes`. Les sales tenen `tipus`, `nomSala`, `titolMonitor` i `streamUrl`.
-- `scripts/create_assets.py`: reprodueix el mapa i els gràfics originals amb Pillow. Executar-lo sobreescriu aquests assets; no cal per iniciar l'aplicació.
+- `scripts/create_assets.py`: reprodueix el mapa i els gràfics d’oficina originals amb Pillow. Executar-lo sobreescriu el mapa i el tileset, però conserva el spritesheet original de George; no cal per iniciar l’aplicació.
 
 ## Correccions respecte del codi de les guies
 
