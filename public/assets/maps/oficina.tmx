@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='utf-8'?>
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="25" height="18" tilewidth="32" tileheight="32" infinite="0" nextlayerid="4" nextobjectid="4">
+  <tileset firstgid="1" name="pixel_office" tilewidth="32" tileheight="32" tilecount="4" columns="4">
+    <image source="../tilesets/pixel_office.png" width="128" height="32" />
+    <tile id="2">
+      <properties>
+        <property name="collides" type="bool" value="true" />
+      </properties>
+    </tile>
+  </tileset>
+  <layer id="1" name="Terra" width="25" height="18">
+    <data encoding="csv">
+2,2,2,2,2,2,2,2,2,2,2,2,1,4,4,4,4,4,4,4,4,4,4,4,4,
+2,2,2,2,2,2,2,2,2,2,2,2,1,4,4,4,4,4,4,4,4,4,4,4,4,
+2,2,2,2,2,2,2,2,2,2,2,2,1,4,4,4,4,4,4,4,4,4,4,4,4,
+2,2,2,2,2,2,2,2,2,2,2,2,1,4,4,4,4,4,4,4,4,4,4,4,4,
+2,2,2,2,2,2,2,2,2,2,2,2,1,4,4,4,4,4,4,4,4,4,4,4,4,
+2,2,2,2,2,2,2,2,2,2,2,2,1,4,4,4,4,4,4,4,4,4,4,4,4,
+2,2,2,2,2,2,2,2,2,2,2,2,1,4,4,4,4,4,4,4,4,4,4,4,4,
+2,2,2,2,2,2,2,2,2,2,2,2,1,4,4,4,4,4,4,4,4,4,4,4,4,
+2,2,2,2,2,2,2,2,2,2,2,2,1,4,4,4,4,4,4,4,4,4,4,4,4,
+2,2,2,2,2,2,2,2,2,2,2,2,1,4,4,4,4,4,4,4,4,4,4,4,4,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
+1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+</data>
+  </layer>
+  <layer id="2" name="Parets" width="25" height="18">
+    <data encoding="csv">
+3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,
+3,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,3,
+3,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,3,
+3,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,3,
+3,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,3,
+3,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,3,
+3,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,3,
+3,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,3,
+3,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,3,
+3,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,3,
+3,3,3,3,3,0,0,3,3,3,3,3,3,3,3,3,3,3,0,0,3,3,3,3,3,
+3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,
+3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,
+3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,
+3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,
+3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,
+3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,
+3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3
+</data>
+  </layer>
+  <objectgroup id="3" name="Objectes">
+    <object id="1" name="George" x="400" y="485" width="0" height="0">
+      <point />
+      <properties>
+        <property name="tipus" type="string" value="spawn" />
+      </properties>
+    </object>
+    <object id="2" name="Reunions" x="48" y="48" width="320" height="256">
+      <properties>
+        <property name="tipus" type="string" value="zona" />
+        <property name="nomSala" type="string" value="Sala de Reunions" />
+        <property name="titolMonitor" type="string" value="Reunions · Canal 01" />
+        <property name="streamUrl" type="string" value="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" />
+      </properties>
+    </object>
+    <object id="3" name="Cafè" x="432" y="48" width="320" height="256">
+      <properties>
+        <property name="tipus" type="string" value="zona" />
+        <property name="nomSala" type="string" value="Zona Cafè" />
+        <property name="titolMonitor" type="string" value="Càmera Descans · Canal 02" />
+        <property name="streamUrl" type="string" value="https://media.w3.org/2010/05/sintel/trailer.mp4" />
+      </properties>
+    </object>
+  </objectgroup>
+</map>
