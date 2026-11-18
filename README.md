@@ -14,7 +14,7 @@ Vue 3 + Vite + Phaser 4. Dues sales, George original, mapa Tiled editable i moni
 
 La tercera demo incorpora el modal nou. La [v1.2.0](https://github.com/polprats/poc-oficina-virtual/tree/v1.2.0) conserva el pas intermedi amb DOMElement i només fullscreen. Les tres etiquetes anteriors continuen intactes.
 
-El repositori és privat. El Site de demos també es publica inicialment amb accés privat del propietari; disposar d’un enllaç no concedeix accés públic. Les demos són estàtiques i no necessiten el servidor de desenvolupament local.
+El Site de demos és **públic des del 18 de novembre de 2026**: la portada i les tres demos es poden obrir sense iniciar sessió amb ChatGPT. El repositori de GitHub continua privat; els enllaços al codi requereixen accés al repositori. Les demos són estàtiques i no necessiten el servidor de desenvolupament local.
 
 ## Executar
 
